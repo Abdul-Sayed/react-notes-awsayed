@@ -890,7 +890,7 @@ Use Formik Library, React Bootstrap, or Semantic Forms for React Forms and styli
 
 						<br />
 						<br />
-						<textarea value={"Some default value"} onChange={this.handleChange} />
+						<textarea name="..." value={this.state....} onChange={this.handleChange} />
 
 						<br />
 						<br />
