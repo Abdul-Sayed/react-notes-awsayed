@@ -3,19 +3,19 @@ Redux gives you a single object with every peice of state in your app. Upon stat
 levels of Redux;
 
 # Store 
-Store: App-wide global object serving as central repository of state
+App-wide global object serving as central repository of state
 
 # Component Views
-View: React Components, receive state from store. User events fire off actions.
+React Components, receive state from store. User events fire off actions.
 
 # Action
-Actions: Dispatch actions to mutate store state. Usually return a payload object
+Dispatch actions to mutate store state. Usually return a payload object
 
 # Dispatch
 Sends action to reducer
 
 # Reducer
-Reducers: Specify how app state changes depending on the specific action. Contains the data we want to save to store. Returns new state
+Specify how app state changes depending on the specific action. Contains the data we want to save to store. Returns new state
 
 
 <!-- //////////////////////////////////////////////////////////////// -->
