@@ -9,7 +9,7 @@ App-wide global object serving as central repository of state
 React Components, receive state from store. User events fire off actions.
 
 # Action
-Dispatch actions to mutate store state. Usually return a payload object
+Dispatch actions to mutate store state. Usually return a payload object. When an action cccurs, it gets sent to all reducers
 
 # Dispatch
 Sends action to reducer
