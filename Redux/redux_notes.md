@@ -24,60 +24,6 @@ Specify how app state changes depending on the specific action. Contains the dat
     npx create-react-app my-react-app
     npm i --save redux react-redux redux-thunk react-router-dom
 
-# Basic idea all in index.js
-    import { createStore } from 'redux' 
-
-
-// STORE -> GLOBALIZED state
-
-// ACTIONS INCREMENT, DECREMENT
-    const increment = () => {
-      return {
-        type: 'INCREMENT'
-      }
-    }
-
-    const decrement = () => {
-      return {
-        type: 'DECREMENT'
-      }
-    }
-
-// REDUCER 
-    const counter = (state=0, action) => {
-      switch (action.type) {
-        case 'INCREMENT':
-          return state + 1;
-        case 'DECREMENT':
-          return state - 1;
-      }
-    }
-
-    let store = createStore(counter);
-
-// DISPATCH 
-    store.dispatch(increment());
-
-
-// view state
-    store.subscribe( () => console.log(store.getState() ) );
-
-# Now seperate the same logic above into seperate files
-
-1) Add store in index.js
-2) Create folders reducers, add in it reetReducer.js, counter.js, isLogged.js
-
-
-
-
-
-
------------------
-
-thunk 
-
-
-
 
 
 
