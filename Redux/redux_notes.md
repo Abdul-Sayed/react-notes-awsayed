@@ -15,7 +15,7 @@ Actions: Dispatch actions to mutate store state. Usually return a payload object
 Sends action to reducer
 
 # Reducer
-Reducers: Specify how app state changes depending on the specific action. Returns new state
+Reducers: Specify how app state changes depending on the specific action. Contains the data we want to save to store. Returns new state
 
 
 <!-- //////////////////////////////////////////////////////////////// -->
