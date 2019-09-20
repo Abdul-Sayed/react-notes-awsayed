@@ -26,6 +26,6 @@ Reducers take state and an action. They specify how app state changes depending 
     npm i --save redux react-redux redux-thunk react-router-dom
 
 
-
+get a snapshot of app state with store.getState()
 
 
