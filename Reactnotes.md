@@ -1023,3 +1023,22 @@ DELETE Request
 			})
 		})
 
+
+
+## Higher Order Components 
+
+export default withExtraProps(CounterComponent)
+
+import CounterComponent from './CounterComponent'
+
+<CounterComponent hello={"world"} />
+{ x: "foo", y: "bar", hello: "world" }
+
+const withExtraProps = (Component) => {
+    return class extends React.Component {
+        render() {
+            const extraProps = { x: "foo", y: "bar" }
+            return <Component {...extraProps} {...this.props} />
+        }
+    }
+}
