@@ -11,10 +11,11 @@ npm install && npm start
 
 PORT=3000 npm start   //=> or whatever other port
 
-This sets up a development server, webpack for bundling, and babel for compilation of JSX to es5
+This sets up a development server, webpack for bundling, and babel for compilation of the JSX extention to React.createElement() calls
 
 # UUId
-Generate Random id
+
+To Generate Random id
 
 import uuid from "uuid";
 
@@ -249,6 +250,8 @@ React is used to declare how the UI should look. React "reacts" to state changes
 
 Components are independant, isolated, and reusable pieces of UI (not entire pages)
 
+Components are like functions that take props and return React elements for the DOM
+
 Component names should be capital CamelCased and end with .JSX, rather than .JS
 
 	import React, { Component } from 'react';
@@ -290,6 +293,7 @@ Wrap all html being rendered within <> ... </> for a virtual DOM wrapping instea
 # Components 
 
 Functional component  //=> stateless (only uses props) More efficient than class components
+Functional component name must be capitalized.
 	import React from "react"
 
 	// => Display Logic goes here
