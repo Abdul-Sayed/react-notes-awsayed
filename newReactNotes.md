@@ -102,7 +102,7 @@ Then import it into your component scss file;
 ## Props
 
 Properties are passed to a child component from a parent, and then accessed in the child;
-In App.js  
+In App.js
 
 <Box on={square.on} />
 Then in the child, the props are accessed
@@ -299,3 +299,27 @@ Instead, the child component should only render its props and the parent should 
             </form>
         )
     }
+
+## Effects
+
+Used for side-effect producing code, such as api calls, use the effects Hook. Its first parameter is an anonymous function, and its
+second parameter is an array of the slices of state that deal with side effects.
+
+ex:
+
+        import React from "react"
+
+        export default function App() {
+            const [count, setCount] = React.useState(0)
+
+            React.useEffect(() => {console.log("Effect function ran")}, [count])
+
+            return (
+                <div>
+                    <h2>The count is {count}</h2>
+                    <button onClick={() => setCount(prevCount => prevCount + 1)}>Add</button>
+                </div>
+            )
+        }
+
+If you want to run an effect only once (on mount and unmount), and immedietly clean it up you can pass an empty array ([]) as a second argument.
