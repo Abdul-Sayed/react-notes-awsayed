@@ -303,7 +303,7 @@ Instead, the child component should only render its props and the parent should 
 ## Effects
 
 Used for side-effect producing code, such as api calls, use the effects Hook. Its first parameter is an anonymous function, and its
-second parameter is an array of the slices of state that deal with side effects.
+second parameter is an array of the slices of state that deal with side effects. useEffect fired after the dom is painted.
 
 ex:
 
@@ -323,3 +323,66 @@ ex:
         }
 
 If you want to run an effect only once (on mount and unmount), and immedietly clean it up you can pass an empty array ([]) as a second argument.
+
+useEffect always runs on the first render. If the 2nd arg is [], it runs on the first render and when component unmounts.
+If the 2nd arg is an array of slices of state, useEffect runs when each of those state slices change.
+
+1. What is a "side effect" in React? What are some examples?
+
+- Any code that affects an outside system.
+- local storage, API, websockets, two states to keep in sync
+
+2. What is NOT a "side effect" in React? Examples?
+
+- Anything that React is in charge of.
+- Maintaining state, keeping the UI in sync with the data,
+  render DOM elements
+
+3. When does React run your useEffect function? When does it NOT run
+   the effect function?
+
+- As soon as the component loads (first render)
+- On every re-render of the component (assuming no dependencies array)
+- Will NOT run the effect when the values of the dependencies in the
+  array stay the same between renders
+
+4. How would you explain what the "dependecies array" is?
+
+- Second paramter to the useEffect function
+- A way for React to know whether it should re-run the effect function
+
+To prevent memory leaks, useEffect should also be used to do cleanup work like unsubscribe from websockets or any other cleanup when a component unmounts.
+
+for cleanup, return a function in the first argument;
+
+        export default function WindowTracker() {
+
+            const [windowWidth, setWindowWidth] = React.useState(window.innerWidth)
+
+            React.useEffect(() => {
+                function watchWidth() {
+                    setWindowWidth(window.innerWidth)
+                }
+
+                window.addEventListener("resize", watchWidth)
+
+                return function() {
+                    window.removeEventListener("resize", watchWidth)
+                }
+            }, [])
+
+            return (
+                <h1>Window width: {windowWidth}</h1>
+            )
+        }
+
+If you want to use async await syntax, write
+
+        React.useEffect(() => {
+            async function getMemes() {
+                const res = await fetch("https://api.imgflip.com/get_memes")
+                const data = await res.json()
+                setAllMemes(data.data.memes)
+            }
+            getMemes()
+        }, [])
