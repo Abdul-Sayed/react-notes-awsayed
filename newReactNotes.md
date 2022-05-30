@@ -138,32 +138,38 @@ Use the second approach if new count relies on previous count.
 It is not recommended for a child component to set its state from incoming props.
 Instead, the child component should only render its props and the parent should maintain state, and pass any state changes as props down to the child.
 
+**Lazy State Initialization**
+
+If the initial value of state requires computing something resource intensive, return it in an anonymous function;
+
+    const [notes, setNotes] = React.useState(() => (JSON.parse(localStorage.getItem("notes")) || []))
+
 ## Lifting State Up
 
     export  default  function App() {
-    const [squares, setSquares] = React.useState(boxes)
+        const [squares, setSquares] = React.useState(boxes)
 
-    function toggle(id) {
-      setSquares(prevSquares => {
-        return prevSquares.map((square) => {
-          return square.id === id ? {...square,  on:  !square.on} : square
-        })
-      })
-    }
+        function toggle(id) {
+            setSquares(prevSquares => {
+                return prevSquares.map((square) => {
+                return square.id === id ? {...square,  on:  !square.on} : square
+                })
+            })
+        }
 
-    const squareElements = squares.map(square => (
-      <Box
-        key={square.id}
-        on={square.on}
-        toggle={() => toggle(square.id)}
-      />
-    ))
+        const squareElements = squares.map(square => (
+        <Box
+            key={square.id}
+            on={square.on}
+            toggle={() => toggle(square.id)}
+        />
+        ))
 
-    return (
-      <main>
-        {squareElements}
-      </main>
-    )
+        return (
+        <main>
+            {squareElements}
+        </main>
+        )
 
     }
 
