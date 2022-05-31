@@ -63,6 +63,8 @@ All styles in header.module.scss are scoped locally to Header.js component.
 Note the import syntax changed from import "./header.module.scss";
 Note the template literal syntax for adding multiple classes
 
+## Dynamic Styling
+
 **Mixins**
 
 In the shared folder, create a scss file for shared variables; as colors.scss or breakpoints.scss;
@@ -145,33 +147,6 @@ If the initial value of state requires computing something resource intensive, r
     const [notes, setNotes] = React.useState(() => (JSON.parse(localStorage.getItem("notes")) || []))
 
 ## Lifting State Up
-
-    export  default  function App() {
-        const [squares, setSquares] = React.useState(boxes)
-
-        function toggle(id) {
-            setSquares(prevSquares => {
-                return prevSquares.map((square) => {
-                return square.id === id ? {...square,  on:  !square.on} : square
-                })
-            })
-        }
-
-        const squareElements = squares.map(square => (
-        <Box
-            key={square.id}
-            on={square.on}
-            toggle={() => toggle(square.id)}
-        />
-        ))
-
-        return (
-        <main>
-            {squareElements}
-        </main>
-        )
-
-    }
 
 ## Forms
 
