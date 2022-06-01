@@ -1,69 +1,21 @@
-## CLI
+# React Notes
+
+# CLI
 
 npx create-react-app my-app
 cd my-app
 npx generate-react-cli component NewComponent
 npm start
 
-## Styling
+Boilerplate for react functional components
+rfc
+rafce
 
-**SCSS**
+# Styling
+
+##SCSS
 run `npm install sass` and rename your files to scss
 Add global styling like google font imports in your index.scss or global.scss file.
-
-**style encapsulation**
-use css modules. Example:
-rename header.css file to header.module.scss
-
-    import styles from "./header.module.scss";
-
-    <ul className={`${styles["menu-items"]} ${styles["red"]}`}>...</ul>
-
-
-
-    <main className={classes["main"]}>
-
-    	<section className={classes["header"]}>
-
-    		<h1 className={classes["header__title"]}>Laura Smith</h1>
-
-    		<h6 className={classes["header__subtitle"]}>Frontend Developer</h6>
-
-    		<p className={classes["header__contact"]}>laurasmith.website</p>
-
-    	</section>
-
-    </main>
-
-    .main {
-
-    	font-family: "Inter";
-    	font-style: normal;
-    	width: 317px;
-
-    	.header {
-
-    		&__title {
-    			font-weight: 700;
-    			font-size: 25px;
-    		}
-    		&__subtitle {
-    			font-weight: 400;
-    			font-size: 12.8px;
-    		}
-    		&__contact {
-    			font-weight: 400;
-    			font-size: 10.24px;
-    		}
-    	}
-
-    }
-
-All styles in header.module.scss are scoped locally to Header.js component.
-Note the import syntax changed from import "./header.module.scss";
-Note the template literal syntax for adding multiple classes
-
-## Dynamic Styling
 
 **Mixins**
 
@@ -88,8 +40,6 @@ Then import it into your component scss file;
     @use '../styles/colors.scss' as color;
     @use '../styles/breakpoints.scss' as breakpoints;
 
-
-
     .warning {
     	color: color.$chubb-red;
     }
@@ -101,31 +51,139 @@ Then import it into your component scss file;
     	}
     }
 
-## Props
+##style encapsulation
+use css modules. Example:
+rename header.css file to header.module.scss
 
-Properties are passed to a child component from a parent, and then accessed in the child;
-In App.js
+    import styles from "./header.module.scss";
 
-<Box on={square.on} />
-Then in the child, the props are accessed
+    <ul className={`${styles["menu-items"]} ${styles["red"]}`}>...</ul>
 
-    export  default  function Box(props) {
+    <main className={classes["main"]}>
+    	<section className={classes["header"]}>
+    		<h1 className={classes["header__title"]}>Laura Smith</h1>
+    		<h6 className={classes["header__subtitle"]}>Frontend Developer</h6>
+    		<p className={classes["header__contact"]}>laurasmith.website</p>
+    	</section>
+    </main>
 
-    	const styles = {
-    		backgroundColor: props.on ?  "#222222"  :  "transparent"
+    .main {
+    	font-family: "Inter";
+    	font-style: normal;
+    	width: 317px;
+
+    	.header {
+    		&__title {
+    			font-weight: 700;
+    			font-size: 25px;
+    		}
+    		&__subtitle {
+    			font-weight: 400;
+    			font-size: 12.8px;
+    		}
+    		&__contact {
+    			font-weight: 400;
+    			font-size: 10.24px;
+    		}
     	}
-
-    	return (
-    		<div
-    			style={styles}
-    			className="box">
-    		</div>
-    	)
     }
 
-## State
+All styles in header.module.scss are scoped locally to Header.js component.
+Note the import syntax changed from import "./header.module.scss";
+Note the template literal syntax for adding multiple classes
 
-The `useState` hook is not used to allow functional components to be stateful.
+## Inline Styles
+
+     <header style={{
+        backgroundColor: 'blue',
+        color: '#fff'
+     }}>
+        ...
+     </header>
+
+## Dynamic Styling
+
+        style={ {textDecoration: completed ? 'line-through' : 'none' } }
+        style={ completed ? { textDecoration: 'line-through' } : {textDecoration: 'none' } }
+
+# Event Handling
+
+        const handleClick1 = () => {
+            console.log('clicked')
+        }
+        const handleClick2 = (name) => {
+            console.log(`${name} was clicked`)
+        }
+        const handleClick3 = (event, name) => {
+            console.log(`${event.target} was clicked by ${name}`)
+        }
+        ...
+        <button onClick={handleClick1}>Click It</button>
+        <button onClick={ () => handleClick2('Dave' ) }>Click It</button>
+        <button onClick={ (event) => handleClick3(event, 'Dave' ) }>Click It</button>
+
+# Props
+
+Properties are passed to a child component from a parent, and then accessed in the child;
+
+In App.js  
+ <Box on={square.on} />
+
+Then in the child, the props are accessed
+
+        export  default  function Box(props) {
+
+            const styles = {backgroundColor: props.on ?  "#222222"  :  "transparent"}
+
+            return (
+                <div
+                    style={styles}
+                    className="box">
+                </div>
+            )
+        }
+
+**Destructured Props**
+
+In App.js  
+ <Box on={square.on} />
+
+In Child
+
+        export  default  function Box( {on} ) {
+
+            const styles = {backgroundColor: on ?  "#222222"  :  "transparent"}
+            return (...)
+        }
+
+**Default props** are used incase the parent fails to pass a property;
+
+        function CatComponent(props) {
+            return <div>
+                    {props.catName || "Sandy"},
+                    Eye Color: {props.eyeColor || "deepblue"},
+                    Age: {props.age || "120"}
+            </div>
+        }
+
+Or
+
+        function CatComponent(props) {
+            return <div>
+                    {props.catName},
+                    Eye Color: {props.eyeColor},
+                    Age: {props.age}
+            </div>
+        }
+        CatComponent.defaultProps = {
+            catName: "Sandy",
+            eyeColor: "deepblue",
+            age: "120"
+        }
+
+# State
+
+The `useState` hook is used to allow functional components to be stateful.
 
     count, setCount] = useState(0)
 
@@ -144,11 +202,11 @@ Instead, the child component should only render its props and the parent should 
 
 If the initial value of state requires computing something resource intensive, return it in an anonymous function;
 
-    const [notes, setNotes] = React.useState(() => (JSON.parse(localStorage.getItem("notes")) || []))
+    const [notes, setNotes] = React.useState( () => (JSON.parse(localStorage.getItem("notes")) || []) )
 
 ## Lifting State Up
 
-## Forms
+# Forms
 
     import React from "react"
 
@@ -281,7 +339,7 @@ If the initial value of state requires computing something resource intensive, r
         )
     }
 
-## Effects
+# Effects
 
 Used for side-effect producing code, such as api calls, use the effects Hook. Its first parameter is an anonymous function, and its
 second parameter is an array of the slices of state that deal with side effects. useEffect fired after the dom is painted.
