@@ -2,10 +2,10 @@
 
 # CLI
 
-npx create-react-app my-app
-cd my-app
-npx generate-react-cli component NewComponent
-npm start
+npx create-react-app my-app  
+cd my-app  
+npx generate-react-cli component NewComponent  
+npm start  
 
 Boilerplate for react functional components
 rfc
