@@ -344,6 +344,12 @@ If the initial value of state requires computing something resource intensive, r
 Used for side-effect producing code, such as api calls, use the effects Hook. Its first parameter is an anonymous function, and its
 second parameter is an array of the slices of state that deal with side effects. useEffect fired after the dom is painted.
 
+If you omit the 2nd paramenter, the effect's function will run at each repaint of the dom, leading to memory leaks.
+If you pass an [] as the 2nd argument, the function will run once when the component loads.
+If you pass a slice of state as the 2nd argument, the function will run only when that part of state changes.
+
+The useEffect function is asynchronous and runs after everything in the component finishes running
+
 ex:
 
         import React from "react"
