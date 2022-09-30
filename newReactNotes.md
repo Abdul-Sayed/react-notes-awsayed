@@ -373,22 +373,27 @@ To make an api call:
         
         const [items, setItems] = useState([]);
         const [fetchError, setFetchError] = useState(null);
+        const [isLoading, setIsLoading] = useState(true);
         
         useEffect(() => {
             const fetchItems = async () => {
+              try {
                 const response = await fetch(API_URL);
                 if (!response.ok) throw Error('Did not recieve expected data');
                 const listItems = await response.json();
                 setItems(listItems);
                 setFetchError(null);
-            } catch(err) {
+              } catch(err) {
                 setFetchError(err.message);
+            } finally {
+                setIsLoading(false);
             }
-            
+           }
             (async () => await fetchItems()) ();
         }, [])
 
 If you want to run an effect only once (on mount and unmount), and immedietly clean it up you can pass an empty array ([]) as a second argument.
+This is good for bulky code that you want to run only once on component mount, and not on each re-render
 
 useEffect always runs on the first render. If the 2nd arg is [], it runs on the first render and when component unmounts.
 If the 2nd arg is an array of slices of state, useEffect runs when each of those state slices change.
