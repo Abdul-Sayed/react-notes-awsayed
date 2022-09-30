@@ -366,6 +366,27 @@ ex:
                 </div>
             )
         }
+        
+To make an api call:
+
+        const API_url = 'http://localhost:3500/items';
+        
+        const [items, setItems] = useState([]);
+        const [fetchError, setFetchError] = useState(null);
+        
+        useEffect(() => {
+            const fetchItems = async () => {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw Error('Did not recieve expected data');
+                const listItems = await response.json();
+                setItems(listItems);
+                setFetchError(null);
+            } catch(err) {
+                setFetchError(err.message);
+            }
+            
+            (async () => await fetchItems()) ();
+        }, [])
 
 If you want to run an effect only once (on mount and unmount), and immedietly clean it up you can pass an empty array ([]) as a second argument.
 
