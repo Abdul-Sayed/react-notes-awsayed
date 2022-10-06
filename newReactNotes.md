@@ -391,6 +391,35 @@ To make an api call:
            }
             (async () => await fetchItems()) ();
         }, [])
+        
+ With axios,
+ 
+        useEffect(() => {
+            const fetchPosts = async () => {
+                try {
+                    const response = await api.get('/posts');
+                    setPosts(response.data)
+                }  catch(err) {   // 500 error
+                    if (err.response) {
+                     console.log(err.response.headers);
+                     console.log(err.response.status);
+                     console.log(err.response.data);   
+                    } else {  // 400 error
+                        console.log(`Error`: ${err.message}`);
+                    }
+                }
+            }
+            fetchPosts();
+        }, [])
+        
+const response = await api.post('/posts', newPost)
+setPosts([...posts, newPost])
+
+const response = await api.put(`/posts/`${id}, updatedPost)
+setPosts(posts.map(post => post.id === id ? {updatedPost} : post))
+
+await api.delete(`/posts/${id}`)
+setPosts([posts.filter(post => post.id !== id)])
 
 If you want to run an effect only once (on mount and unmount), and immedietly clean it up you can pass an empty array ([]) as a second argument.
 This is good for bulky code that you want to run only once on component mount, and not on each re-render
@@ -457,3 +486,4 @@ If you want to use async await syntax, write
             }
             getMemes()
         }, [])
+        
