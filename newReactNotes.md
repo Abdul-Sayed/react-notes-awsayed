@@ -487,3 +487,64 @@ If you want to use async await syntax, write
             getMemes()
         }, [])
         
+        
+## React Router
+
+npm i react-router-dom
+
+index.js
+
+    import {BrowserRouter as Router, Route} from "react-router-dom";
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(
+      <React.StrictMode>
+        <Router>
+          <Route path="/" component={App} />
+        </Router>
+      </React.StrictMode>
+    );
+
+in App.js
+
+    import { Route, Switch, useHistory } from "react-router-dom";
+
+    function App() {
+      return (
+        <>
+          <Header />
+          <Nav />
+          <Switch>
+            <Route exact path="/">
+              <Home />
+            </Route>
+            <Route exact path="/post">
+              <NewPost />
+            </Route>
+            <Route path="/post/:id">
+              <PostPage />
+            </Route>
+            <Route path="/about" component={About} />
+            <Route path="*" component={Missing} />
+          </Switch>
+          <Footer />
+        </>
+      );
+    }
+
+To link to a page, such as in nav component;
+
+    import {Link} from 'react-router-dom';
+
+      <ul>
+        <li><Link to="/">Home</li>
+        <li><Link to="/post">Posts</li>
+        <li><Link to={`/post/${post.id}`}>{post.title}</li>
+        <li><Link to="/about">About</li>
+      </ul>
+
+To use a route parameter, such as :id in PostPage component;
+
+    import {useParams, Link} from 'react-router-dom';
+
+    const {id} = useParams();
