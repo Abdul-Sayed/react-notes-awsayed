@@ -548,3 +548,39 @@ To use a route parameter, such as :id in PostPage component;
     import {useParams, Link} from 'react-router-dom';
 
     const {id} = useParams();
+    
+
+## Custom Hooks
+Reusable logic/utility functions that can be used in other components. Hook files are like functional components without render. Like angular services.
+
+        import { useState, useEffect } from "react";
+
+        const useWindowSize = () => {
+          const [windowSize, setWindowSize] = useState({
+            width: undefined,
+            height: undefined,
+          });
+
+          useEffect(() => {
+            const handleResize = () => {
+              setWindowSize({
+                width: window.innerWidth,
+                height: window.innerHeight,
+              });
+            };
+            handleResize();
+
+            window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+          }, []);
+
+          return windowSize;
+        };
+
+        export default useWindowSize;
+        
+ Use the hook in another file;
+ 
+        import useWindowSize from "./hooks/useWindowSize";
+
+        const { width, height } = useWindowSize();
