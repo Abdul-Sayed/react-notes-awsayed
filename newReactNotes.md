@@ -113,16 +113,22 @@ Note the template literal syntax for adding multiple classes
         const handleClick1 = () => {
             console.log('clicked')
         }
-        const handleClick2 = (name) => {
+        const handleClick2 = (e) => {
+            console.log(e, 'clicked')
+        }
+        const handleClick3 = (name) => {
             console.log(`${name} was clicked`)
         }
-        const handleClick3 = (event, name) => {
+        const handleClick4 = (event, name) => {
             console.log(`${event.target} was clicked by ${name}`)
         }
         ...
         <button onClick={handleClick1}>Click It</button>
-        <button onClick={ () => handleClick2('Dave' ) }>Click It</button>
-        <button onClick={ (event) => handleClick3(event, 'Dave' ) }>Click It</button>
+        <button onClick={handleClick2}>Click It</button>
+        <button onClick={ () => handleClick3('Dave' ) }>Click It</button>
+        <button onClick={ (event) => handleClick4(event, 'Dave' ) }>Click It</button>
+
+With handleClick1/2, e is passed automatically
 
 ## Props
 
@@ -209,6 +215,8 @@ If the initial value of state requires computing something resource intensive, r
     const [notes, setNotes] = React.useState( () => (JSON.parse(localStorage.getItem("notes")) || []) )
 
 ## Lifting State Up
+
+Create an event handler function in the parent and pass a reference to it as props to the child. When the event fires, the child should pass data to that prop function.
 
 ## Forms
 
@@ -338,18 +346,18 @@ If the initial value of state requires computing something resource intensive, r
                 </select>
                 <br />
                 <br />
-                <button>Submit</button>
+                <button type="submit">Submit</button>
             </form>
         )
     }
 
 ## Effects
 
-Used for side-effect producing code, such as api calls, use the effects Hook. Its first parameter is an anonymous function, and its second parameter is an array of the slices of state that deal with side effects. useEffect fired after the dom is painted.
+Used for side-effect producing code, such as api calls, use the effects Hook. Its first parameter is an anonymous function, and its second parameter is an array of the slices of state that deal with side effects. useEffect fires after the dom is painted.
 
 If you omit the 2nd paramenter, the effect's function will run at each repaint of the dom, leading to memory leaks.
 If you pass an [] as the 2nd argument, the function will run once when the component loads.
-If you pass a slice of state as the 2nd argument, the function will run only when that part of state changes.
+If you pass a slice of state as the 2nd argument, the function will run on first render and then only when that part of state changes.
 
 The useEffect function is asynchronous and runs after everything in the component finishes running
 
@@ -381,16 +389,16 @@ To make an api call:
     useEffect(() => {
         const fetchItems = async () => {
             try {
-            const response = await fetch(API_URL);
-            if (!response.ok) throw Error('Did not recieve expected data');
-            const listItems = await response.json();
-            setItems(listItems);
-            setFetchError(null);
+                const response = await fetch(API_URL);
+                if (!response.ok) throw Error('Did not recieve expected data');
+                const listItems = await response.json();
+                setItems(listItems);
+                setFetchError(null);
             } catch(err) {
-            setFetchError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
+                setFetchError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
         }
         (async () => await fetchItems()) ();
     }, [])
@@ -425,6 +433,27 @@ Other crud operations:
 
     await api.delete(`/posts/${id}`)
     setPosts([posts.filter(post => post.id !== id)])
+
+Plain fetch without async syntax
+
+    useEffect(() => {
+        fetch('http://localhost:8000/blogs')
+        .then(res => {
+            if (!res.ok) {  // 400 error jumps to catch block
+                throw Error('could not fetch the data for that resource');
+            }
+            return res.json();
+        })
+        .then(data => {
+            setData(data);
+            setIsPending(false);
+            setError(null);
+        })
+        .catch(err => {  // 500 errors
+            setError(err.message);
+            setIsPending(false);
+        })
+    }, [])
 
 If you want to run an effect only once (on mount and unmount), and immedietly clean it up you can pass an empty array ([]) as a second argument. This is good for bulky code that you want to run only once on component mount, and not on each re-render.
 
@@ -510,7 +539,7 @@ index.js
 
 in App.js
 
-    import { Route, Switch, useHistory } from "react-router-dom";
+    import { Route, Switch } from "react-router-dom";
 
     function App() {
       return (
@@ -518,16 +547,10 @@ in App.js
           <Header />
           <Nav />
           <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
-            <Route exact path="/post">
-              <NewPost />
-            </Route>
-            <Route path="/post/:id">
-              <PostPage />
-            </Route>
-            <Route path="/about" component={About} />
+            <Route exact path="/"><Home /></Route>
+            <Route exact path="/post"><NewPost /></Route>
+            <Route path="/post/:id"><PostPage /></Route>
+            <Route path="/about" component={About} />  // alt syntax
             <Route path="*" component={Missing} />
           </Switch>
           <Footer />
@@ -548,9 +571,23 @@ To link to a page, such as in nav component;
 
 To use a route parameter, such as :id in PostPage component;
 
-    import {useParams, Link} from 'react-router-dom';
+    import {useParams} from 'react-router-dom';
 
-    const {id} = useParams();
+    const {id} = useParams();  // id was the parameter used in the routing
+
+
+Redirect from code  
+Push a new page onto the router stack with useHistory
+
+    import {useHistory} from 'react';
+
+    const history = useHistory();
+
+    history.go(-1);  // go back a page
+    history.go(1);  // go forward a page
+    history.push('/');  // go back to home page
+
+
 
 ## Custom Hooks
 
@@ -594,44 +631,44 @@ Custom Axios Hook:
     import axios from "axios";
 
     const useAxiosFetch = (dataUrl) => {
-    const [data, setData] = useState([]);
-    const [fetchError, setFetchError] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+        const [data, setData] = useState([]);
+        const [fetchError, setFetchError] = useState(null);
+        const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        let isMounted = true;
-        const source = axios.CancelToken.source();
+        useEffect(() => {
+            let isMounted = true;
+            const source = axios.CancelToken.source();
 
-        const fetchData = async (url) => {
-        setIsLoading(true);
-        try {
-            const response = await axios.get(url, {
-            cancelToken: source.token,
-            });
-            if (isMounted) {
-            setData(response.data);
-            setFetchError(null);
-            }
-        } catch (err) {
-            if (isMounted) {
-            setFetchError(err.message);
-            setData([]);
-            }
-        } finally {
-            isMounted && setTimeout(() => setIsLoading(false), 2000);
-        }
-        };
+            const fetchData = async (url) => {
+                setIsLoading(true);
+                try {
+                    const response = await axios.get(url, {
+                        cancelToken: source.token,
+                    });
+                    if (isMounted) {
+                        setData(response.data);
+                        setFetchError(null);
+                    }
+                } catch (err) {
+                    if (isMounted) {
+                        setFetchError(err.message);
+                        setData([]);
+                    }
+                } finally {
+                    isMounted && setIsLoading(false);
+                }
+            };
 
-        fetchData(dataUrl);
+            fetchData(dataUrl);
 
-        const cleanUp = () => {
-        isMounted = false;
-        source.cancel();
-        };
-        return cleanUp;
-    }, [dataUrl]);
+            const cleanUp = () => {
+                isMounted = false;
+                source.cancel();
+            };
+            return cleanUp;
+        }, [dataUrl]);
 
-    return { data, fetchError, isLoading };
+        return { data, fetchError, isLoading };
     };
 
     export default useAxiosFetch;
@@ -640,11 +677,51 @@ To use it;
 
     import useAxiosFetch from "./hooks/useAxiosFetch";
 
-    const [data, fetchError, isLoading] = useAxiosFetch("http://localhost:3500/posts");
+    const {data: posts, fetchError, isLoading} = useAxiosFetch("http://localhost:3500/posts");
 
     useEffect(() => {
-    setPosts(data);
-    }, [data]);
+        ...
+    }, [posts]);
+
+
+Plain Fetch Custom Hook
+
+    import { useState, useEffect } from "react";
+
+    const useFetch = (url) => {
+        const [data, setData] = useState([]);
+        const [fetchError, setFetchError] = useState(null);
+        const [isLoading, setIsLoading] = useState(false);
+        
+        useEffect(() => {
+            const abortContr = new AbortController();
+
+            fetch('http://localhost:8000/blogs', {signal: abortContr.signal})
+            .then(res => {
+                if (!res.ok) {  // 400 error jumps to catch block
+                    throw Error('could not fetch the data for that resource');
+                }
+                return res.json();
+            })
+            .then(data => {
+                setData(data);
+                setIsPending(false);
+                setError(null);
+            })
+            .catch(err => {  // 500 errors
+                if (err.name !== 'AbortError') {
+                    setError(err.message);
+                    setIsPending(false);
+                }
+            })
+
+            return () => abortContr.abort();  // abort the fetch if component unmounts
+        }, [url])
+        return { data, fetchError, isLoading };
+    }
+
+    export default useFetch;
+
 
 
 ## Context
@@ -653,3 +730,132 @@ Create a context file in a context folder for each seperate part of state
 The context file must provide each prop that the components need.
 Parent components don't pass props to children, instead, just route to children.
 In a child, don't recieve props, instead read the state from context.
+
+Example CartContext.js
+
+    import {createContext} from 'react';
+
+    const CartContext = createContext();
+
+    export function CartProvider({children}) {
+
+        const [items, setItems] = useState([]);
+        const addToCart = (name, price) => {
+            setItems(prevItems => [...prevItems, {name, price}])
+        }
+
+        return (
+            <CartContext.Provider value={{items, addToCart}}>
+                {children}
+            </CartContext.Provider>
+        )
+    }
+
+    export default CartContext;
+
+CartContext provides items and addToCart state.
+
+In index.js, provide the application with the context;
+
+    import {CartProvider} from './CartContext';
+    ...
+        <React.StrictMode>
+            <Router>
+                <CartProvider>
+                    <Route path="/" component={App} />
+                </CartProvider>
+            </Router>
+      </React.StrictMode>
+
+Actually, a context should only be provided to the components that need it, no higher.  
+So don't provide a context to a whole app if there will be components that don't use it.  
+Select the right parent component to provide a relevant context to its children.  
+Other parts of the app can do something similar with a different context.  
+
+To use the state,
+
+    import {useContext} from 'react';
+    import CartContext from '../cartContext';
+    ...
+    const {item, addToCart} = useContext(CartContext);
+
+
+## useReducer
+
+Alternative way to manipulate component state, besides useState. Replaces need for many useState variables, and their associated setter functions.
+Replaces all setter functions with a switch statement.
+
+Create a reduer and action file  
+PostReducer.js;
+
+    import { ACTION_TYPES } from "./postActionTypes";
+
+    export const INITIAL_STATE = {
+        loading: false,
+        post: {},
+        error: false,
+    };
+
+    export const postReducer = (state, action) => {
+        switch (action.type) {
+            case ACTION_TYPES.FETCH_START:
+            return {
+                ...state,
+                loading: true,
+            };
+            case ACTION_TYPES.FETCH_SUCCESS:
+            return {
+                ...state,
+                post: action.payload,
+            };
+            case ACTION_TYPES.FETCH_ERROR:
+            return {
+                ...state,
+                error: true,
+            };
+            default:
+            return state;
+        }
+    };
+
+PostActionTypes.js;
+
+    export const ACTION_TYPES = {
+        FETCH_START: "FETCH_START",
+        FETCH_SUCCESS: "FETCH_SUCCESS",
+        FETCH_ERROR: "FETCH_ERROR",
+    };
+
+Post.js;
+
+    import { useReducer } from "react";
+    import { INITIAL_STATE, postReducer } from "./postReducer";
+    import { ACTION_TYPES } from "./postActionTypes";
+
+    const Post = () => {
+        const [state, dispatch] = useReducer(postReducer, INITIAL_STATE);
+
+        const handleFetch = () => {
+            dispatch({ type: ACTION_TYPES.FETCH_START });
+            fetch("https://jsonplaceholder.typicode.com/psts/1"
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: data });
+            })
+            .catch((err) => {
+                dispatch({ type: ACTION_TYPES.FETCH_ERROR });
+            });
+        };
+
+        return (
+            <div>
+                <button onClick={handleFetch}>{state.loading ? "Wait..." : "Fetch the post"}</button>
+                <p>{state.post?.title}</p>
+                <span>{state.error && "Something went wrong!"}</span>
+            </div>
+        );
+    };
+
+    export default Post;
