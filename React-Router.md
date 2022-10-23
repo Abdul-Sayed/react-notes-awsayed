@@ -1,4 +1,57 @@
-# Old React-Router
+# React Router v6
+
+Switch is replaced by Routes
+Every route is exact matched by default. No exact attribute needed
+Components are no longer nested inside Route. Also, the component attribute is replaced with element.
+Booleans can determine navigation.
+
+in App.js
+
+    import { BrowserRouter as Router, Routes, Route, Redirect } from "react-router-dom";
+    // import all nested components
+
+    function App() {
+      return (
+        <Router>
+          <Header />
+
+          <Routes>
+            <Route path="/" element={<Home/>} /> 
+            <Route path="/post" element={<NewPost/>}  />
+            <Route path="/post/:id" element={<PostPage/>} />
+            <Route path="/about/*" element={<About/>} />
+            <Route path="/terms" element={<Navigate to "/about"/>} />
+            <Route path="/checkout" element={cartIsEmpty ? <Navigate to "/products"/> : <Navigate to "/checkout"/>} />
+            <Route path="*" element={<Missing/>} />
+          <Routes>
+
+          <Footer />
+        </Router>
+      );
+    }
+
+Children components can nest routes in the same way, except relative paths are used.
+Notice that the About PAge route in App.js had "/about/*" to liberate the exact path match to nested routing.
+
+    import {Routes} from 'react-router-dom';
+
+    <Routes>
+      <Route path="offers" element={<Offers />} />
+    </Routes>
+
+useHistory is replaced by useNavigate to progromatically navigate
+
+    import {useNavigate} from 'react-router-dom';
+    const navigate = useNavigate();
+
+    <button onClick={() => navigate('/products')}>Products</button>
+
+
+
+
+
+
+## Old React-Router
 
     npm i --save react-router-dom
 

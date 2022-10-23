@@ -539,7 +539,12 @@ index.js
 
 in App.js
 
+
+    import { Route, Switch, useHistory } from "react-router-dom";
+    // import all nested components
+
     import { Route, Switch } from "react-router-dom";
+
 
     function App() {
       return (
@@ -557,6 +562,8 @@ in App.js
         </>
       );
     }
+
+Child components can nest routes in the same way
 
 To link to a page, such as in nav component;
 
@@ -576,6 +583,18 @@ To use a route parameter, such as :id in PostPage component;
     const {id} = useParams();  // id was the parameter used in the routing
 
 
+To get the current path;
+
+    import {useRouteMatch} from 'react-router-dom';
+
+    const {path} = useRouteMatch();
+
+To redirect to another page
+
+    import {Redirect} from 'react-router-dom';
+
+    <Redirect from="home" to="dashboard" />
+
 Redirect from code  
 Push a new page onto the router stack with useHistory
 
@@ -586,9 +605,6 @@ Push a new page onto the router stack with useHistory
     history.go(-1);  // go back a page
     history.go(1);  // go forward a page
     history.push('/');  // go back to home page
-
-
-
 ## Custom Hooks
 
 Reusable logic/utility functions that can be used in other components. Hook files are like functional components without render. Like angular services.
