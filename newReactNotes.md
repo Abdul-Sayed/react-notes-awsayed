@@ -11,6 +11,11 @@ Boilerplate for react functional components
 rfc
 rafce
 
+## API Keys
+
+Store api keys in a .env file in the root of the application. Preface all keys with REACT_APP_ ;  REACT_APP_YOUTUBE_RAPID_API_KEY  
+Then in the file the data is being fetched, reference the api keys as: process.env.REACT_APP_YOUTUBE_RAPID_API_KEY
+
 ## Styling
 
 ### SCSS
