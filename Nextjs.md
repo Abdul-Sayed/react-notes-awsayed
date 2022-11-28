@@ -104,6 +104,18 @@ Add them to the public folder. Use a relative route to access;
 
     <Image src='/logo.png' width="128" height="77" />
 
+If loading images from an external server, you need to whitelist it in next.config.js
+
+        /** @type {import('next').NextConfig} */
+        const nextConfig = {
+        images: {
+            domains: ['links.papareact.com']
+        }
+        }
+
+        module.exports = nextConfig
+
+
 ## Routing
 
 Use the link component;
@@ -146,7 +158,7 @@ This component will be rendered incase an invalid route is visited
 ## Data Fetching
 
 Data is fetched in the server before the broswer recieves anything.  
-Normally fetching occurs from the browser within useEffect, but in Next, it occurs in the getStaticProps method which runs before the component is rendered, waits for the data, and renders the component with the available data.
+Normally fetching occurs from the browser within useEffect, but in Next, it occurs in the getStaticProps method which runs before the component is rendered, waits for the data, and renders the component with the available data. Only works in pages files.
 
 getStaticProps: fetches at build time
 
@@ -169,7 +181,7 @@ Pass the users data as props to the component needing the data
 
     export default Users;
 
-getServerSideProps: Fetches on every request. Slower
+getServerSideProps: Fetches on every page visit. Slower
 
     export const getServerSideProps = async (context) => {
         const res = await fetch(`https://jsonplaceholder.typicode.com/users/${context.params.id}`);
