@@ -243,3 +243,24 @@ In vercel, inport the repo from your github, and deploy
 In package.json, in scripts, add `"export": "next export"`
 
 The out folder will have the static site with everything pre fetched. So the site will work very fast.
+
+## Secret Keys
+
+To use api keys in the app, add a env config in next.config.js which points to your .env file.  
+The app code will reference the key name in next.config.js; process.env.stripe_public_key  
+
+    /** @type {import('next').NextConfig} */
+    const nextConfig = {
+    reactStrictMode: true,
+    swcMinify: true,
+    images: {
+        domains: [
+        ],
+    },
+    env: {
+        stripe_public_key: process.env.STRIPE_PUBLIC_KEY,
+    },
+    };
+
+    module.exports = nextConfig;
+

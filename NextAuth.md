@@ -1,5 +1,63 @@
 # NextAuth
 
+# Next Auth
+
+## Setup
+
+example uses google as the auth provider
+
+In pages/api/auth create a dynamic file path called [...nextauth].js
+
+    import NextAuth from "next-auth";
+    import GoogleProvider from "next-auth/providers/google";
+
+    export default NextAuth({
+      providers: [
+        // OAuth authentication providers...
+        GoogleProvider({
+          clientId: process.env.GOOGLE_ID,
+          clientSecret: process.env.GOOGLE_SECRET,
+        }),
+      ],
+    });
+
+In .env.local file, add the keys
+
+    GOOGLE_ID=key_goes_here
+    GOOGLE_SECRET=key_goes_here
+    NEXTAUTH_URL=http://localhost:3000
+
+    HOST=http://localhost:3000
+
+    In https://console.cloud.google.com/apis/credentials/oauthclient/
+
+Find APIs & Services, Credentials, and in Authorized Redirect URIs, add
+`http://localhost:3000/api/auth/callback/google`
+
+## Deployment
+
+In Vercel, add environment variables
+
+    `NEXTAUTH_URL=https://production_domain_of_app`  
+    `NEXTAUTH_SECRET=Some_Secret_Generated_At_https://generate-secret.vercel.app/32`
+    `GOOGLE_ID=key_goes_here`
+    `GOOGLE_SECRET=key_goes_here`
+
+
+In https://console.cloud.google.com/apis/credentials/oauthclient/
+
+Find APIs & Services, Credentials, and in Authorized Redirect URIs, add
+`https://amozon.vercel.app/api/auth/callback/google`
+
+Replace https://amozon.vercel.app with app domain url in vercel
+
+In Authorized Javascript Origins, add:
+`https://amozon.vercel.app/` , replacing with your deployed vercel app domain
+
+
+
+
+=======
 Provides Authentication solutions for Nextjs applications
 
 Designed to work with popular sign in services
@@ -111,7 +169,3 @@ In [...nextauth].js
     });
 
 Get the Github id and secret by signing into github -> settings -> developer settings from scrooling down on the left -> OAuth Apps -> New OAuth app -> Add `http://localhost:3000` as Homepage url, and Authorized callback url as http://localhost:3000/api/auth/callback/github, but when done developing, make sure to replace the domain with vercel; https://amozon.vercel.app/api/auth/callback/github. Register and get Client ID and Client secret -> paste them into .env.local and add them to environment variables in vercel.
-
-
-
-
