@@ -16,22 +16,22 @@ Next.js serverside renders and delivers the initial page, and then lazy loads th
 
 ## File Directory
 
-The components live in the pages folder. Each page is a react component as well as a route;
+The components live in the pages folder. Each file is a react component as well as a route;
 pages/about.js is `<About />` and `https://localhost3000/about` route. Pages/index.js is the root path.
 
 For nested routes, create folders inside the pages directory;
 `pages/test/index.js` has <https://localhost3000/test> route
-and `pages/test/about.js` has <https://localhost3000/test/about> route.  
+and `pages/test/about.js` has <https://localhost3000/test/about> route.
 
 For components that are not routed to, add them to a components folder. Import and add those components in pages/index.js. Use uppercase for component names, and lowercase for page names.
 
 ## Layout
 
-Pages/_app.js wraps all the page compoenents. Static layout content like footers and navbars are added here. Those would come from the components folder.
+Pages/\_app.js wraps all the page compoenents. Static layout content like footers and navbars are added here. Those would come from the components folder.
 
 To have components that appear in each view, such as a navbar and footer;
 
-pages/_app.js:
+pages/\_app.js:
 
     import Layout from "../components/Layout";
 
@@ -78,7 +78,7 @@ In each page;
 
 ## Styling
 
-Styles include a global css file, and css modules for style encapsulation.  
+Styles include a global css file, and css modules for style encapsulation.
 
 pages/index.js is the Home page. Styles/Home.module.css affects it.
 
@@ -94,7 +94,6 @@ Use the styles;
 
 Where .container is a css class in Home.module.css  
 The selectors can only be css classes. Not html elements
-
 
 ## Assets/images
 
@@ -114,7 +113,6 @@ If loading images from an external server, you need to whitelist it in next.conf
         }
 
         module.exports = nextConfig
-
 
 ## Routing
 
@@ -148,7 +146,6 @@ In pages/[id]/index.js, retrieve the id
 
     const router = useRouter();
     const {id} = router.query;
-
 
 ## wildcard component
 
@@ -247,7 +244,7 @@ The out folder will have the static site with everything pre fetched. So the sit
 ## Secret Keys
 
 To use api keys in the app, add a env config in next.config.js which points to your .env file.  
-The app code will reference the key name in next.config.js; process.env.stripe_public_key  
+The app code will reference the key name in next.config.js; process.env.stripe_public_key
 
     /** @type {import('next').NextConfig} */
     const nextConfig = {
@@ -263,4 +260,3 @@ The app code will reference the key name in next.config.js; process.env.stripe_p
     };
 
     module.exports = nextConfig;
-

@@ -1,6 +1,230 @@
 # NextAuth
 
-# Next Auth
+---
+
+## Setup with NextJS 13
+
+    npm install next-auth
+
+Add an API route in `pages/api/auth/[...nextauth].js`
+
+    import NextAuth from "next-auth";
+    import FacebookProvider from "next-auth/providers/facebook";
+    export const authOptions = {
+      // Configure one or more authentication providers
+      providers: [
+        FacebookProvider({
+          clientId: process.env.Facebook_ID!,
+          clientSecret: process.env.Facebook_SECRET!,
+        }),
+        // ...add more providers here
+      ],
+      pages: {
+        signIn: "/auth/signin",
+      },
+      secret: process.env.NEXTAUTH_SECRET!,
+    };
+    export default NextAuth(authOptions);
+
+Add your providers
+
+---
+
+**Wrap the application in a provider**
+
+Create a file SessionProvider.tsx in components folder, adjacent to app folder
+
+    "use client";
+
+    import { Session } from "next-auth";
+    import { SessionProvider as Provider } from "next-auth/react";
+
+    type Props = {
+      children: React.ReactNode;
+      session: Session | null;
+    };
+
+    function SessionProvider({ children, session }: Props) {
+      return <Provider>{children}</Provider>;
+    }
+
+    export default SessionProvider;
+
+In layout.tsx;
+
+    import "../styles/globals.css";
+    import SideBar from "./../components/SideBar";
+    import SessionProvider from "../components/SessionProvider";
+    import { getServerSession } from "next-auth";
+    import { authOptions } from "../pages/api/auth/[...nextauth]";
+
+    export const metadata = {
+      title: "ChatGPT",
+      description: "Clone of OpenAI's ChatGPT assistant",
+    };
+
+    export default async function RootLayout({ children }: { children: React.ReactNode }) {
+      const session = await getServerSession(authOptions);
+      return (
+        <html lang="en">
+          <body>
+            <SessionProvider session={session}>
+              <div className="flex">
+                <div className="bg-[#202123] max-w-xs h-screen overflow-y-auto md:min-w-[20rem]">
+                  <SideBar />
+                </div>
+                <div className="bg-[#343541] flex-1">{children}</div>
+              </div>
+            </SessionProvider>
+          </body>
+        </html>
+      );
+    }
+
+Session is obtained in a serverside component with:
+
+    import { getServerSession } from "next-auth";
+    const session = await getServerSession(authOptions);
+
+Session is obtained ina client side component with:
+
+    import { useSession } from "next-auth/react";
+    const { data: session, status } = useSession();
+
+For Google:
+
+In google console, on left, go to Build => Authentication.
+Get Started, choose Google
+Toggle enable, and set an email. Save
+Hover over it and edit configuration. Click Web SDK configuration
+Reveal Web Client ID and Web Client Secret -> paste those to env variables
+
+---
+
+`https://developers.facebook.com/`
+Create a facebook developer account, create a new app, choose consumer, facebook login, Web, enter any site url (can be changed later to the deployed site url). Click next, and then on settings on the left. When you have your deployed site url, add it to Valid OAuth Redirect URIs. Then settings Gear -> Basics. The App ID is the Facebook_ID and the App Secret is the Facebook_Secret. Paste those into your environment variables. As for the NEXTAUTH_SECRET, generate one from https://generate-secret.vercel.app/32
+
+In app/auth/signin/page.tsx;
+
+    import { getProviders } from "next-auth/react";
+    import Image from "next/image";
+    import SignInComponent from "./SignInComponent";
+
+    async function SignInPage() {
+      const providers = await getProviders();
+
+      return (
+        <div>
+          <div>
+            <Image
+              className="rounded-full mx-2 object-cover"
+              width={700}
+              height={700}
+              src="https://static.xx.fbcdn.net/rsrc.php/v3/y2/r/yvbOx5two0W.png"
+              alt="Profile Pucture"
+            />
+          </div>
+          <SignInComponent providers={providers} />
+        </div>
+      );
+    }
+
+    export default SignInPage;
+
+In SignInComponent;
+
+    "use client";
+
+    import { getProviders } from "next-auth/react";
+    import { signIn } from "next-auth/react";
+
+    type Props = {
+    providers: Awaited<ReturnType<typeof getProviders>>;
+    };
+
+    export default function SignInComponent({ providers }: Props) {
+      return (
+        <div className="flex justify-center">
+          {Object.values(providers!).map((provider) => (
+            <div key={provider.name}>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() =>
+                  signIn(provider.id, {
+                    callbackUrl: process.env.VERCEL_URL || "http://localhost:3000",
+                  })
+                }
+              >
+                Sign in with {provider.name}
+              </button>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+Wrap the app in a provider  
+Create a providers.tsx on the same level as layout;
+
+    "use client";
+
+    import { SessionProvider } from "next-auth/react";
+
+    export default function Providers({ session, children }: any) {
+      return <SessionProvider session={session}>{children}</SessionProvider>;
+    }
+
+In layout.tsx;
+
+    import "../styles/globals.css";
+    import Header from "./Header";
+    import Providers from "./providers";
+    import { getServerSession } from "next-auth/next";
+
+    export default async function RootLayout({ children }: { children: React.ReactNode }) {
+      const session = await getServerSession();
+      return (
+        <html lang="en">
+          <head />
+          <body>
+            <Header />
+            <Providers session={session}>{children}</Providers>
+          </body>
+        </html>
+      );
+    }
+
+In page.tsx;
+
+    import ChatInput from "./ChatInput";
+    import { getServerSession } from "next-auth/next";
+
+    const Home = async () => {
+
+      const session = await getServerSession();
+
+      return (
+        <main>
+          <ChatInput session={session} />
+        </main>
+      );
+    };
+
+    export default Home;
+
+In ChatInput.tsx;
+
+    import { getServerSession } from "next-auth/next";
+
+    type Props = {
+    session: Awaited<ReturnType<typeof getServerSession>>;
+    };
+
+    function ChatInput({ session }: Props) {
+      ... use session
+    }
+
+---
 
 ## Setup
 
@@ -38,11 +262,10 @@ Find APIs & Services, Credentials, and in Authorized Redirect URIs, add
 
 In Vercel, add environment variables
 
-    `NEXTAUTH_URL=https://production_domain_of_app`  
+    `NEXTAUTH_URL=https://production_domain_of_app`
     `NEXTAUTH_SECRET=Some_Secret_Generated_At_https://generate-secret.vercel.app/32`
     `GOOGLE_ID=key_goes_here`
     `GOOGLE_SECRET=key_goes_here`
-
 
 In https://console.cloud.google.com/apis/credentials/oauthclient/
 
@@ -54,9 +277,6 @@ Replace https://amozon.vercel.app with app domain url in vercel
 In Authorized Javascript Origins, add:
 `https://amozon.vercel.app/` , replacing with your deployed vercel app domain
 
-
-
-
 =======
 Provides Authentication solutions for Nextjs applications
 
@@ -64,7 +284,7 @@ Designed to work with popular sign in services
 
     npm install next-auth
 
-In _app.js give the entire application access to NextAuth's authentication state;
+In \_app.js give the entire application access to NextAuth's authentication state;
 
     import { SessionProvider } from "next-auth/react";
 
@@ -99,10 +319,9 @@ Create a pages/api/auth/[...nextauth].js file;
       secret: process.env.NEXTAUTH_SECRET,
     });
 
-  In .env file, add `NEXTAUTH_URL=http://localhost:3000`, and in vercel environment variables, add `NEXTAUTH_URL=https://amozon.vercel.app`, replacing with your project domain.
+In .env file, add `NEXTAUTH_URL=http://localhost:3000`, and in vercel environment variables, add `NEXTAUTH_URL=https://amozon.vercel.app`, replacing with your project domain.
 
-  Go to https://generate-secret.vercel.app/32 to generate a next wuth secret key. In ,env, add this to NEXTAUTH_SECRET. And do the same in vercel.
-
+Go to https://generate-secret.vercel.app/32 to generate a next wuth secret key. In ,env, add this to NEXTAUTH_SECRET. And do the same in vercel.
 
 With each OAuth provider, you'll need to register to get an ID and Secret Key.
 
@@ -120,7 +339,6 @@ Visit https://console.cloud.google.com/, click on your project -> Quick access A
 In Authorized JavaScript origins -> add `http://localhost:3000`, and `https://amozon.vercel.app`, replacing the latter with your vercel project domain
 
 This assumes your server your project locally in port 3000
-
 
 In .env.local;
 
@@ -143,7 +361,6 @@ To sign in, in a component;
 
     <div onClick={signIn}>
     <div onClick={signOut}>
-
 
 The steps to add Github as a provider are similar
 

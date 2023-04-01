@@ -5,7 +5,7 @@
 npx create-react-app my-app  
 cd my-app  
 npx generate-react-cli component NewComponent  
-npm start  
+npm start
 
 Boilerplate for react functional components
 rfc
@@ -13,7 +13,7 @@ rafce
 
 ## API Keys
 
-Store api keys in a .env file in the root of the application. Preface all keys with REACT_APP_ ;  REACT_APP_YOUTUBE_RAPID_API_KEY  
+Store api keys in a .env file in the root of the application. Preface all keys with REACT*APP* ; REACT_APP_YOUTUBE_RAPID_API_KEY  
 Then in the file the data is being fetched, reference the api keys as: process.env.REACT_APP_YOUTUBE_RAPID_API_KEY
 
 ## Styling
@@ -139,7 +139,7 @@ With handleClick1/2, e is passed automatically
 
 Properties are passed to a child component from a parent, and then accessed in the child;
 
-In App.js  
+In App.js
 
     <Box on={square.on} />
 
@@ -159,7 +159,7 @@ Then in the child, the props are accessed
 
 ### Destructured Props
 
-In App.js  
+In App.js
 
     <Box on={square.on} />
 
@@ -408,8 +408,8 @@ To make an api call:
         (async () => await fetchItems()) ();
     }, [])
 
- With axios,
- 
+With axios,
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -419,7 +419,7 @@ To make an api call:
                 if (err.response) {
                     console.log(err.response.headers);
                     console.log(err.response.status);
-                    console.log(err.response.data);   
+                    console.log(err.response.data);
                 } else {  // 400 error
                     console.log(`Error`: ${err.message}`);
                 }
@@ -544,7 +544,6 @@ index.js
 
 in App.js
 
-
     import { Route, Switch, useHistory } from "react-router-dom";
     // import all nested components
 
@@ -587,7 +586,6 @@ To use a route parameter, such as :id in PostPage component;
 
     const {id} = useParams();  // id was the parameter used in the routing
 
-
 To get the current path;
 
     import {useRouteMatch} from 'react-router-dom';
@@ -610,6 +608,7 @@ Push a new page onto the router stack with useHistory
     history.go(-1);  // go back a page
     history.go(1);  // go forward a page
     history.push('/');  // go back to home page
+
 ## Custom Hooks
 
 Reusable logic/utility functions that can be used in other components. Hook files are like functional components without render. Like angular services.
@@ -640,7 +639,7 @@ Reusable logic/utility functions that can be used in other components. Hook file
 
         export default useWindowSize;
 
- Use the hook in another file;
+Use the hook in another file;
 
         import useWindowSize from "./hooks/useWindowSize";
 
@@ -704,7 +703,6 @@ To use it;
         ...
     }, [posts]);
 
-
 Plain Fetch Custom Hook
 
     import { useState, useEffect } from "react";
@@ -713,7 +711,7 @@ Plain Fetch Custom Hook
         const [data, setData] = useState([]);
         const [fetchError, setFetchError] = useState(null);
         const [isLoading, setIsLoading] = useState(false);
-        
+
         useEffect(() => {
             const abortContr = new AbortController();
 
@@ -743,8 +741,6 @@ Plain Fetch Custom Hook
 
     export default useFetch;
 
-
-
 ## Context
 
 Create a context file in a context folder for each seperate part of state
@@ -772,7 +768,7 @@ Example CartContext.js
         )
     }
 
-    export default CartContext;
+    export default CartProvider;
 
 CartContext provides items and addToCart state.
 
@@ -791,7 +787,7 @@ In index.js, provide the application with the context;
 Actually, a context should only be provided to the components that need it, no higher.  
 So don't provide a context to a whole app if there will be components that don't use it.  
 Select the right parent component to provide a relevant context to its children.  
-Other parts of the app can do something similar with a different context.  
+Other parts of the app can do something similar with a different context.
 
 To use the state,
 
@@ -799,7 +795,6 @@ To use the state,
     import CartContext from '../cartContext';
     ...
     const {item, addToCart} = useContext(CartContext);
-
 
 ## useReducer
 
