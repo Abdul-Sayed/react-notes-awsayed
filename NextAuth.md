@@ -28,8 +28,6 @@ Add an API route in `pages/api/auth/[...nextauth].js`
 
 Add your providers
 
----
-
 **Wrap the application in a provider**
 
 Create a file SessionProvider.tsx in components folder, adjacent to app folder
@@ -45,7 +43,7 @@ Create a file SessionProvider.tsx in components folder, adjacent to app folder
     };
 
     function SessionProvider({ children, session }: Props) {
-      return <Provider>{children}</Provider>;
+      return <Provider session={session}>{children}</Provider>;
     }
 
     export default SessionProvider;
@@ -86,12 +84,24 @@ Session is obtained in a serverside component with:
     import { getServerSession } from "next-auth";
     const session = await getServerSession(authOptions);
 
-Session is obtained ina client side component with:
+Session is obtained in a client side component with:
 
     import { useSession } from "next-auth/react";
     const { data: session, status } = useSession();
 
-For Google:
+## Connecting different providers
+
+**For Reddit**:
+
+`https://www.reddit.com/prefs/apps`
+
+Scroll down -> 'create an app...'
+
+Add a name, choose web app, and for now, use `http://localhost:3000/api/auth/callback/reddit` for the redirect uri. Later change 'http://localhost:3000' to your deployed vercel domain.
+
+Next to the ? under reddet, web app, there is an id. Copy that `Reddit_ID` and save it to your .env file. Also copy the secret as `Reddit_SECRET`.
+
+**For Google**:
 
 In google console, on left, go to Build => Authentication.
 Get Started, choose Google
@@ -100,6 +110,8 @@ Hover over it and edit configuration. Click Web SDK configuration
 Reveal Web Client ID and Web Client Secret -> paste those to env variables
 
 ---
+
+**For Facebook**:
 
 `https://developers.facebook.com/`
 Create a facebook developer account, create a new app, choose consumer, facebook login, Web, enter any site url (can be changed later to the deployed site url). Click next, and then on settings on the left. When you have your deployed site url, add it to Valid OAuth Redirect URIs. Then settings Gear -> Basics. The App ID is the Facebook_ID and the App Secret is the Facebook_Secret. Paste those into your environment variables. As for the NEXTAUTH_SECRET, generate one from https://generate-secret.vercel.app/32
